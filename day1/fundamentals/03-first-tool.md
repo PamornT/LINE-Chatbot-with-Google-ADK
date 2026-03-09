@@ -34,13 +34,89 @@
 3. มี **docstring** อธิบาย purpose และ parameters
 4. Return ค่าที่ JSON-serializable (dict, str, int, bool, list)
 
-### Simple Tool Example
+---
+# 👷 Start Create Tool 🛠️
+
+## 💿 COPY Data to Workshop
+```bash
+# ตรวจสอบก่อนว่าตอนนี้อยู๋ที่ folder /workshop
+
+cp -r ../data ./
+```
+---
+# 🤖 Agent with Single 🔨 Tools
+
+## Create Tool - Available Car Model
 
 ```python
 # tools.py - เก็บ tool functions ไว้
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
+import json
+import re
+import os
 
-def get_vehicle_specs(model_name: str) -> Dict[str, any]:
+def load_vehicle_data() -> Dict[str, Any]:
+    """Load vehicle data from ../data/vehicle_data.md"""
+    path = os.path.join(os.path.dirname(__file__), '../data/vehicle_data.md')
+    with open(path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'```json\s*(.*?)\s*```', content, re.DOTALL)
+    if match:
+        return json.loads(match.group(1))
+    return {}
+
+def get_available_models() -> list[str]:
+    """Get list of available vehicle models.
+    
+    Returns:
+        List of unique vehicle models in inventory
+    """
+    data = load_vehicle_data()
+    specs = data.get('specs', {})
+    return list(specs.keys())
+```
+
+## 🤖 Adding Tools to an Agent
+
+```python
+# agent.py
+from google.adk.agents.llm_agent import Agent
+from tools.sales import (
+    get_available_models
+)
+
+# สร้าง sales agent สำหรับ dealership
+root_agent = Agent(
+    model='gemini-2.5-flash',
+    name='AutomotiveSalesAgent',
+    description='Sales assistant with vehicle lookup and financing tools',
+    instruction="""You are an expert automotive sales consultant for a Thai dealership.
+
+You have access to comprehensive tools to help customers:
+- Search for available models
+""",
+    tools=[
+        get_available_models
+    ]
+)
+```
+
+## ทดสอบเปลี่ยน Format การ Response
+```python
+# เพิ่มเข้า Instructions ใน agent.py
+
+If a tool returns a LIST of vehicles: 
+Format the result as a human-readable bullet list.
+```
+---
+# 🤖 Agent with Multiple 🛠️ Tools
+
+## ⛏️ Create Tool - Car Specification
+
+```python
+#tools/sales.py
+
+def get_vehicle_specs(model_name: str) -> Dict[str, Any]:
     """Get specifications for a vehicle model.
     
     Args:
@@ -49,28 +125,49 @@ def get_vehicle_specs(model_name: str) -> Dict[str, any]:
     Returns:
         Dictionary with vehicle specifications
     """
-    specs_db = {
-        'Toyota Camry Hybrid': {
-            'engine': '2.5L Hybrid',
-            'transmission': 'Automatic CVT',
-            'mpg': '54 city / 50 highway',
-            'seating': 5,
-            'cargo': '15.1 cu ft'
-        },
-        'Honda Civic Type R': {
-            'engine': '2.0L Turbocharged',
-            'transmission': '6-speed Manual',
-            'hp': 306,
-            'seating': 5,
-            'cargo': '12.3 cu ft'
-        }
-    }
+    data = load_vehicle_data()
+    specs_db = data.get('specs', {})
     
     if model_name in specs_db:
         return specs_db[model_name]
     else:
         return {'error': f'Model {model_name} not found'}
+```
 
+## 🤖 Add Tools to An Agent 
+
+```python
+# agent.py
+from google.adk.agents.llm_agent import Agent
+from tools.sales import (
+    get_available_models,
+    get_vehicle_specs
+)
+
+# สร้าง sales agent สำหรับ dealership
+root_agent = Agent(
+    model='gemini-2.5-flash',
+    name='AutomotiveSalesAgent',
+    description='Sales assistant with vehicle lookup and financing tools',
+    instruction="""You are an expert automotive sales consultant for a Thai dealership.
+
+You have access to comprehensive tools to help customers:
+- Search for available models
+- Look up vehicle specifications
+
+If a tool returns a LIST of vehicles: 
+Format the result as a human-readable bullet list.""",
+    tools=[
+        get_available_models,
+        get_vehicle_specs
+    ]
+)
+```
+
+---
+## 🔧 Create Tool - Calculate Monthly Payment and Search Inventory
+
+```python
 def calculate_monthly_payment(
     price: float,
     down_payment: float,
@@ -108,10 +205,10 @@ def calculate_monthly_payment(
     }
 
 def search_inventory(
-    model: str,
+    model: Optional[str] = None,
     color: Optional[str] = None,
     max_price: Optional[float] = None
-) -> Dict:
+) -> Dict[str, Any]:
     """Search vehicle inventory.
     
     Args:
@@ -122,16 +219,14 @@ def search_inventory(
     Returns:
         List of matching vehicles
     """
-    inventory = [
-        {'model': 'Toyota Camry', 'color': 'white', 'price': 1299000, 'mileage': 0},
-        {'model': 'Toyota Camry', 'color': 'black', 'price': 1299000, 'mileage': 500},
-        {'model': 'Honda Civic', 'color': 'red', 'price': 2499000, 'mileage': 0},
-    ]
+    data = load_vehicle_data()
+    inventory = data.get('inventory', [])
     
     results = inventory
     
     # Filter by model
-    results = [v for v in results if v['model'].lower() == model.lower()]
+    if model:
+        results = [v for v in results if v['model'].lower() == model.lower()]
     
     # Filter by color if provided
     if color:
@@ -143,7 +238,48 @@ def search_inventory(
     
     return {'count': len(results), 'vehicles': results}
 ```
+## Add Tools to An Agent
 
+```python
+# agent.py
+from google.adk.agents.llm_agent import Agent
+from tools.sales import (
+    get_available_models,
+    get_vehicle_specs,
+    calculate_monthly_payment,
+    search_inventory
+)
+
+# สร้าง sales agent สำหรับ dealership
+root_agent = Agent(
+    model='gemini-2.5-flash',
+    name='AutomotiveSalesAgent',
+    description='Sales assistant with vehicle lookup and financing tools',
+    instruction="""You are an expert automotive sales consultant for a Thai dealership.
+
+You have access to comprehensive tools to help customers:
+- Look up vehicle specifications
+- Calculate financing options
+- Search our inventory
+- Search for available models
+
+If a tool returns a LIST of vehicles: 
+Format the result as a human-readable bullet list.
+
+Always use the tools to provide accurate information.
+Present information clearly in Thai currency (฿).
+Help customers find the perfect vehicle based on their needs and budget.""",
+    tools=[
+        get_available_models,
+        get_vehicle_specs,
+        calculate_monthly_payment,
+        search_inventory
+    ]
+)
+```
+---
+---
+---
 ---
 
 ## 🤖 Agent with Multiple Tools
@@ -153,15 +289,16 @@ def search_inventory(
 ```python
 # agent.py
 from google.adk.agents.llm_agent import Agent
-from tools import (
+from tools.sales import (
+    get_available_models,
     get_vehicle_specs,
     calculate_monthly_payment,
     search_inventory
 )
 
-# สร้าง sales agent ด้วย multiple tools
-sales_agent = Agent(
-    model='gemini-1.5-flash',
+# สร้าง sales agent สำหรับ dealership
+root_agent = Agent(
+    model='gemini-2.5-flash',
     name='AutomotiveSalesAgent',
     description='Sales assistant with vehicle lookup and financing tools',
     instruction="""You are an expert automotive sales consultant for a Thai dealership.
@@ -170,17 +307,20 @@ You have access to comprehensive tools to help customers:
 - Look up vehicle specifications
 - Calculate financing options
 - Search our inventory
+- Search for available models
 
 Always use the tools to provide accurate information.
 Present information clearly in Thai currency (฿).
 Help customers find the perfect vehicle based on their needs and budget.""",
     tools=[
+        get_available_models,
         get_vehicle_specs,
         calculate_monthly_payment,
         search_inventory
     ]
 )
 ```
+
 
 ### How Agent Decides to Use Tools
 
@@ -219,124 +359,6 @@ Agent formats response:
 
 ---
 
-## 🎯 Advanced Tool Patterns
-
-### Tool with State/Side Effects
-
-```python
-def book_test_drive(
-    customer_name: str,
-    vehicle_model: str,
-    preferred_date: str,
-    preferred_time: str
-) -> Dict:
-    """Book a test drive appointment.
-    
-    Args:
-        customer_name: Customer's full name
-        vehicle_model: Which vehicle to test
-        preferred_date: Date in YYYY-MM-DD format
-        preferred_time: Time in HH:MM format
-    
-    Returns:
-        Booking confirmation
-    """
-    import uuid
-    
-    booking = {
-        'confirmation_id': str(uuid.uuid4())[:8],
-        'customer': customer_name,
-        'vehicle': vehicle_model,
-        'date': preferred_date,
-        'time': preferred_time,
-        'status': 'confirmed',
-        'location': 'Bangkok Showroom, Rama IV Rd.'
-    }
-    
-    # In real scenario, save to database
-    # database.save_booking(booking)
-    
-    return booking
-
-def get_financing_options(
-    vehicle_price: float,
-    customer_credit_score: int
-) -> Dict:
-    """Get available financing options based on credit score.
-    
-    Args:
-        vehicle_price: Price of vehicle in THB
-        customer_credit_score: Credit score (0-850 US style or equivalent)
-    
-    Returns:
-        Available financing products
-    """
-    if customer_credit_score >= 750:
-        interest_rate = 3.5
-        max_term = 84
-    elif customer_credit_score >= 650:
-        interest_rate = 5.5
-        max_term = 60
-    else:
-        interest_rate = 7.5
-        max_term = 48
-    
-    return {
-        'interest_rate': interest_rate,
-        'max_loan_term': max_term,
-        'max_loan_amount': vehicle_price * 0.9,  # Can finance 90%
-        'products': [
-            {'term': 36, 'rate': interest_rate},
-            {'term': 60, 'rate': interest_rate + 0.5},
-            {'term': max_term, 'rate': interest_rate + 1.0}
-        ]
-    }
-```
-
----
-
-## 🎮 Hands-on Exercise: Chat with Agent
-
-### Running Your Agent
-
-```bash
-# ไปที่ project directory
-cd sales_agent
-
-# รัน web interface
-adk web --port 8000
-```
-
-### Test Scenarios
-
-Try these conversations:
-
-**Scenario 1: Spec Lookup**
-```
-You: "specifications of Honda Civic Type R"
-Expected: Agent ใช้ get_vehicle_specs() เพื่อตอบ
-```
-
-**Scenario 2: Financing**
-```
-You: "ผ่อนรถ 1 ล้านบาท 60 เดือน อัตราดอกเบี้ย 4% เดือนละเท่าไหร่"
-Expected: Agent ใช้ calculate_monthly_payment() เพื่อคำนวณ
-```
-
-**Scenario 3: Inventory Search**
-```
-You: "มี Honda Civic สีแดงอยู่มั้ย"
-Expected: Agent ใช้ search_inventory() เพื่อค้นหา
-```
-
-**Scenario 4: Booking**
-```
-You: "สมัครทดสอบรถ Toyota Camry วันพรุ่งนี้ตอนเช้า"
-Expected: Agent ใช้ book_test_drive() เพื่อจองเวลา
-```
-
----
-
 ## 💡 Best Practices for Tools
 
 1. **Clear Names & Descriptions**: Tool names ต้องชัดเจน ว่าทำอะไร
@@ -354,311 +376,3 @@ Expected: Agent ใช้ book_test_drive() เพื่อจองเวลา
 3. ✅ Docstrings ช่วยให้ agent เข้าใจ
 4. ✅ Agent decide automatically เมื่อใช้ tool
 5. ✅ ใช้ tools เพื่อให้ agent มีความจำเพาะและแม่นยำ
-
----
-
-## 🚀 Next Steps
-
-**Lesson 04**: รัน agent ผ่าน web interface และ API
-
-**Code Examples**: [exercises/day1/sales_agent/tools.py](exercises/day1/sales_agent/tools.py)
-    expect(result.error).to.exist;
-  });
-});
-
-describe('Search Tool', () => {
-  it('should return search results', async () => {
-    const result = await searchTool.execute({ query: 'weather' });
-    expect(result.query).to.equal('weather');
-    expect(result.results).to.be.an('array');
-  });
-});
-```
-
-### Integration Tests
-
-```javascript
-describe('Agent with Tools', () => {
-  it('should use calculator for math questions', async () => {
-    const agent = new SmartToolAgent([calculatorTool]);
-    const response = await agent.respond('What is 15 * 7?');
-
-    expect(response).to.include('105'); // Should contain calculation result
-  });
-
-  it('should fallback to AI for non-tool questions', async () => {
-    const agent = new SmartToolAgent([calculatorTool]);
-    const response = await agent.respond('What is the meaning of life?');
-
-    expect(response).to.be.a('string');
-    expect(response.length).to.be.greaterThan(10);
-  });
-});
-```
-
----
-
-## 🌐 Real-World Tool Examples
-
-### E-commerce Tools
-
-```javascript
-const productSearchTool = {
-  name: 'searchProducts',
-  description: 'ค้นหาสินค้าในร้าน',
-  execute: async ({ query, category, maxPrice }) => {
-    // Call e-commerce API
-    const products = await api.searchProducts({
-      q: query,
-      category,
-      price_max: maxPrice
-    });
-    return products;
-  }
-};
-
-const orderStatusTool = {
-  name: 'checkOrderStatus',
-  description: 'ตรวจสอบสถานะคำสั่งซื้อ',
-  execute: async ({ orderId }) => {
-    const order = await api.getOrder(orderId);
-    return {
-      orderId,
-      status: order.status,
-      tracking: order.tracking_number,
-      estimatedDelivery: order.delivery_date
-    };
-  }
-};
-```
-
-### Customer Service Tools
-
-```javascript
-const faqTool = {
-  name: 'searchFAQ',
-  description: 'ค้นหาคำตอบจาก FAQ',
-  execute: async ({ question }) => {
-    const faqs = await database.query('faqs', {
-      question: { $regex: question, $options: 'i' }
-    });
-    return faqs.map(faq => ({
-      question: faq.question,
-      answer: faq.answer,
-      category: faq.category
-    }));
-  }
-};
-
-const ticketTool = {
-  name: 'createSupportTicket',
-  description: 'สร้าง ticket สนับสนุน',
-  execute: async ({ customerId, issue, priority }) => {
-    const ticket = await api.createTicket({
-      customer_id: customerId,
-      description: issue,
-      priority: priority || 'medium',
-      status: 'open'
-    });
-    return {
-      ticketId: ticket.id,
-      status: ticket.status,
-      estimatedResponse: '2 hours'
-    };
-  }
-};
-```
-
----
-
-## 🔄 Tool Chaining
-
-### Sequential Tool Execution
-
-```javascript
-class ChainToolAgent extends SmartToolAgent {
-  async respond(message) {
-    const toolCalls = await this.decideToolChain(message);
-
-    if (toolCalls && toolCalls.length > 0) {
-      const results = [];
-
-      for (const toolCall of toolCalls) {
-        const result = await this.executeTool(toolCall.toolName, toolCall.parameters);
-        results.push({
-          tool: toolCall.toolName,
-          result,
-          reasoning: toolCall.reasoning
-        });
-      }
-
-      // Combine results
-      return this.synthesizeResults(results, message);
-    }
-
-    return await super.respond(message);
-  }
-
-  async decideToolChain(message) {
-    const prompt = `Analyze this request: "${message}"
-
-Available tools: ${this.tools.map(t => `${t.name}: ${t.description}`).join(', ')}
-
-Sometimes multiple tools are needed. Decide if a sequence of tools would be helpful.
-
-Respond with JSON array of tool calls:
-[
-  {
-    "toolName": "tool1",
-    "parameters": {...},
-    "reasoning": "why this tool first"
-  },
-  {
-    "toolName": "tool2",
-    "parameters": {...},
-    "reasoning": "why this tool next"
-  }
-]
-
-Or empty array if no tools needed.`;
-
-    const response = await this.think(prompt);
-    return JSON.parse(response);
-  }
-
-  synthesizeResults(results, originalMessage) {
-    const summary = results.map(r =>
-      `${r.tool}: ${JSON.stringify(r.result)}`
-    ).join('\n');
-
-    const prompt = `Original request: "${originalMessage}"
-
-Tool execution results:
-${summary}
-
-Synthesize a comprehensive response for the user.`;
-
-    return this.think(prompt);
-  }
-}
-```
-
----
-
-## 🎮 Hands-on Exercises
-
-### Exercise 1: Weather Agent
-
-**Task:** สร้าง agent ที่ให้ข้อมูลสภาพอากาศ
-
-```javascript
-// Implement weather tool
-// Integrate with agent
-// Test with different cities
-```
-
-### Exercise 2: Personal Assistant
-
-**Task:** สร้าง agent ที่มี tools สำหรับ:
-- Calendar management
-- Reminder setting
-- Task tracking
-
-### Exercise 3: Business Intelligence
-
-**Task:** สร้าง agent ที่มี tools สำหรับ:
-- Sales data analysis
-- Customer insights
-- Performance metrics
-
----
-
-## 🚀 Best Practices
-
-### Tool Design
-1. **Clear Descriptions**: อธิบาย function ของ tool ชัดเจน
-2. **Parameter Validation**: ตรวจสอบ input parameters
-3. **Error Handling**: จัดการ errors อย่าง graceful
-4. **Caching**: Cache results สำหรับ performance
-
-### Agent Integration
-1. **Smart Selection**: เลือก tool ที่เหมาะสม
-2. **Fallback Logic**: มี fallback เมื่อ tool ล้มเหลว
-3. **Response Formatting**: จัดรูปแบบ output ให้ user-friendly
-4. **Logging**: Log tool usage สำหรับ debugging
-
----
-
-## 📊 Monitoring Tool Usage
-
-```javascript
-class MonitoredToolAgent extends SmartToolAgent {
-  constructor(tools) {
-    super(tools);
-    this.usageStats = new Map();
-  }
-
-  async executeTool(toolName, parameters) {
-    const startTime = Date.now();
-
-    try {
-      const result = await super.executeTool(toolName, parameters);
-      const duration = Date.now() - startTime;
-
-      // Record successful usage
-      this.recordUsage(toolName, true, duration);
-
-      return result;
-    } catch (error) {
-      // Record failed usage
-      this.recordUsage(toolName, false, Date.now() - startTime);
-      throw error;
-    }
-  }
-
-  recordUsage(toolName, success, duration) {
-    const stats = this.usageStats.get(toolName) || {
-      calls: 0,
-      successes: 0,
-      failures: 0,
-      totalDuration: 0,
-      avgDuration: 0
-    };
-
-    stats.calls++;
-    if (success) stats.successes++;
-    else stats.failures++;
-
-    stats.totalDuration += duration;
-    stats.avgDuration = stats.totalDuration / stats.calls;
-
-    this.usageStats.set(toolName, stats);
-  }
-
-  getUsageStats() {
-    return Object.fromEntries(this.usageStats);
-  }
-}
-```
-
----
-
-## 🎯 Key Takeaways
-
-1. **Tools Extend Capabilities**: เพิ่ม functionality เกิน AI built-in
-2. **Smart Tool Selection**: ใช้ AI เพื่อเลือก tool ที่เหมาะสม
-3. **Error Handling**: จัดการ failures อย่าง robust
-4. **Tool Chaining**: รวม multiple tools สำหรับ complex tasks
-5. **Monitoring**: Track tool performance และ usage
-
----
-
-## 🚀 Next Steps
-
-ใน lesson ถัดไป เราจะเรียนรู้ **การ run agent ผ่าน web interface** และสร้าง user experience ที่ดี
-
-**พร้อมให้ agent ของคุณมี superpowers แล้วหรือยัง?** ⚡🔧🤖
-
----
-
-*Code Examples: [exercises/day1/tools/](exercises/day1/tools/)*
