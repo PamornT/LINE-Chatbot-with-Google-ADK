@@ -179,7 +179,7 @@ Format the result as a human-readable bullet list.""",
 ---
 ## 🔧 Test - Run Command in Terminal
 ``` bash
-# ตรวจสอบว่าอยู่ที่ folder workshop
+cd ..
 adk web
 ```
 
