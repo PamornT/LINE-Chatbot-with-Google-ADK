@@ -38,9 +38,8 @@
 # 👷 Start Create Tool 🛠️
 
 ## 💿 COPY Data to Workshop
+ตรวจสอบก่อนว่าตอนนี้อยู๋ที่ folder /workshop
 ```bash
-# ตรวจสอบก่อนว่าตอนนี้อยู๋ที่ folder /workshop
-
 cp -r ../data ./
 ```
 ---
