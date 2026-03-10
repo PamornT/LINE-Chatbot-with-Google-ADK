@@ -46,10 +46,24 @@ cp -r ../data ./
 ---
 # 🤖 Agent with Single 🔨 Tools
 
+# สร้าง folder tools
+```
+mkdir tools
+```
+# เข้า folder tools
+```
+cd tools
+```
+
+# สร้างไฟล์ __init.py และ vehicle.py
+```
+touch __init__.py & touch vehicle.py
+```
+
 ## Create Tool - Available Car Model
 
 ```python
-# tools.py - เก็บ tool functions ไว้
+# copy code to tools/vehicle.py
 from typing import Dict, Optional, Any
 import json
 import re
@@ -81,7 +95,7 @@ def get_available_models() -> list[str]:
 ```python
 # agent.py
 from google.adk.agents.llm_agent import Agent
-from tools.sales import (
+from tools.vehicle import (
     get_available_models
 )
 
@@ -114,7 +128,7 @@ Format the result as a human-readable bullet list.
 ## ⛏️ Create Tool - Car Specification
 
 ```python
-#tools/sales.py
+#tools/vehicle.py
 
 def get_vehicle_specs(model_name: str) -> Dict[str, Any]:
     """Get specifications for a vehicle model.
@@ -139,7 +153,7 @@ def get_vehicle_specs(model_name: str) -> Dict[str, Any]:
 ```python
 # agent.py
 from google.adk.agents.llm_agent import Agent
-from tools.sales import (
+from tools.vehicle import (
     get_available_models,
     get_vehicle_specs
 )
@@ -168,6 +182,7 @@ Format the result as a human-readable bullet list.""",
 ## 🔧 Create Tool - Calculate Monthly Payment and Search Inventory
 
 ```python
+# tools/vehicle.py
 def calculate_monthly_payment(
     price: float,
     down_payment: float,
@@ -243,7 +258,7 @@ def search_inventory(
 ```python
 # agent.py
 from google.adk.agents.llm_agent import Agent
-from tools.sales import (
+from tools.vehicle import (
     get_available_models,
     get_vehicle_specs,
     calculate_monthly_payment,
@@ -289,7 +304,7 @@ Help customers find the perfect vehicle based on their needs and budget.""",
 ```python
 # agent.py
 from google.adk.agents.llm_agent import Agent
-from tools.sales import (
+from tools.vehicle import (
     get_available_models,
     get_vehicle_specs,
     calculate_monthly_payment,
