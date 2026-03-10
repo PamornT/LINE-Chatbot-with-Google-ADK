@@ -46,16 +46,16 @@ cp -r ../data ./
 ---
 # 🤖 Agent with Single 🔨 Tools
 
-# สร้าง folder tools
+### สร้าง folder tools
 ```
 mkdir tools
 ```
-# เข้า folder tools
+### เข้า folder tools
 ```
 cd tools
 ```
 
-# สร้างไฟล์ __init.py และ vehicle.py
+### สร้างไฟล์ __init.py และ vehicle.py
 ```
 touch __init__.py & touch vehicle.py
 ```
@@ -176,6 +176,12 @@ Format the result as a human-readable bullet list.""",
         get_vehicle_specs
     ]
 )
+```
+---
+## 🔧 Test - Run Command in Terminal
+``` bash
+# ตรวจสอบว่าอยู่ที่ folder workshop
+adk web
 ```
 
 ---
