@@ -5,13 +5,15 @@
 adk create base_agent
 ```
 
+---
+
 ### Change Sales Agent to Sub Agent
 
 เปิดไฟล์ sales_agent/agent.py แล้วเปลี่ยน root_agent เป็น sales_agent
 
-~~root_agent = Agent(~~
-
+```python
 sales_agent = Agent(
+```
 
 ---
 
@@ -19,14 +21,15 @@ sales_agent = Agent(
 
 เปิดไฟล์ sales_agent/agent.py แล้วเปลี่ยน root_agent เป็น operations_agent
 
-~~root_agent = Agent(~~
-
+```python
 operations_agent = Agent(
-
+```
 ---
 
-### 
+### Copy Code to Base Agent
 ```python
+#base_agent/agent.py
+
 from google.adk.agents.llm_agent import Agent
 
 from sales_agent.agent import sales_agent
