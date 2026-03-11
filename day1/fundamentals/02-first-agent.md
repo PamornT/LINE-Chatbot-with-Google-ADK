@@ -13,10 +13,9 @@
 - ✅ Python 3.10+ ทำงานได้
 
 ```bash
-# Verify setup
-python3 --version      # ต้อง 3.10+
+python3 --version
 pip --version
-echo $GOOGLE_API_KEY   # Verify Gemini API key
+echo $GOOGLE_API_KEY
 ```
 
 ---
@@ -26,7 +25,6 @@ echo $GOOGLE_API_KEY   # Verify Gemini API key
 ### 1. Install Google ADK
 
 ```bash
-# ใน Codespace terminal
 pip install google-adk
 ```
 
@@ -34,21 +32,18 @@ pip install google-adk
 
 Google ADK มี CLI tool เพื่อสร้าง project structure:
 
+### สร้าง folder workshop
 ```bash
-# สร้าง folder workshop
 mkdir workshop
-
-# เข้า folder workshop
 cd workshop
-
-# สร้าง agent project
-adk create sales_agent
-
-# ตรวจสอบ project structure
-ls -la sales_agent/
 ```
 
-Project structure จะเป็นแบบนี้:
+### create agent ผ่าน Google ADK CLI
+```bash
+adk create sales_agent
+```
+
+Project structure ภายใน folder workshop จะเป็นแบบนี้:
 ```
 sales_agent/
 ├── agent.py           # Main agent code

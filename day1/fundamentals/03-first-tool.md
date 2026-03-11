@@ -61,8 +61,9 @@ touch __init__.py & touch vehicle.py
 
 ## Create Tool - Available Car Model
 
+Copy Code ใส่ในไฟล์ tools/vehicle.py
 ```python
-# copy code to tools/vehicle.py
+# vehicle.py
 from typing import Dict, Optional, Any
 import json
 import re
@@ -90,7 +91,7 @@ def get_available_models() -> list[str]:
 ```
 
 ## 🤖 Adding Tools to an Agent
-
+replace code ที่ไฟล์ sales_agent/agent.py
 ```python
 # agent.py
 from google.adk.agents.llm_agent import Agent
@@ -113,7 +114,12 @@ You have access to comprehensive tools to help customers:
     ]
 )
 ```
-
+---
+## 🔧 Test - Run Command in Terminal
+``` bash
+cd ..
+adk web
+```
 ## ทดสอบเปลี่ยน Format การ Response
 ```python
 # เพิ่มเข้า Instructions ใน agent.py
@@ -125,7 +131,7 @@ Format the result as a human-readable bullet list.
 # 🤖 Agent with Multiple 🛠️ Tools
 
 ## ⛏️ Create Tool - Car Specification
-
+เพิ่ม function เข้าไปที่ไฟล์ tools/vehicle.py
 ```python
 #tools/vehicle.py
 
@@ -148,7 +154,7 @@ def get_vehicle_specs(model_name: str) -> Dict[str, Any]:
 ```
 
 ## 🤖 Add Tools to An Agent 
-
+replace code ที่ไฟล์ sales_agent/agent.py
 ```python
 # agent.py
 from google.adk.agents.llm_agent import Agent
@@ -176,16 +182,10 @@ Format the result as a human-readable bullet list.""",
     ]
 )
 ```
----
-## 🔧 Test - Run Command in Terminal
-``` bash
-cd ..
-adk web
-```
 
 ---
 ## 🔧 Create Tool - Calculate Monthly Payment and Search Inventory
-
+เพิ่ม function เข้าไปที่ไฟล์ tools/vehicle.py
 ```python
 # tools/vehicle.py
 def calculate_monthly_payment(
@@ -259,7 +259,7 @@ def search_inventory(
     return {'count': len(results), 'vehicles': results}
 ```
 ## Add Tools to An Agent
-
+replace code ที่ไฟล์ sales_agent/agent.py
 ```python
 # agent.py
 from google.adk.agents.llm_agent import Agent
@@ -396,3 +396,7 @@ Agent formats response:
 3. ✅ Docstrings ช่วยให้ agent เข้าใจ
 4. ✅ Agent decide automatically เมื่อใช้ tool
 5. ✅ ใช้ tools เพื่อให้ agent มีความจำเพาะและแม่นยำ
+
+
+
+echo "export SENDGRID_API_KEY='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'" > sendgrid.env
