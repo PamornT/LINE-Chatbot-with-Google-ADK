@@ -361,6 +361,3 @@ Agent formats response:
 4. ✅ Agent decide automatically เมื่อใช้ tool
 5. ✅ ใช้ tools เพื่อให้ agent มีความจำเพาะและแม่นยำ
 
-
-
-echo "export SENDGRID_API_KEY='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'" > sendgrid.env

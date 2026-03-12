@@ -21,14 +21,13 @@ import dateparser
 
 
 def resolve_date(date_text: str):
-    """
-    Convert natural language date into ISO date format.
-    Example: 'tomorrow', 'next Monday', 'พรุ่งนี้'
-    """
 
     parsed = dateparser.parse(
         date_text,
-        languages=["th", "en"]
+        languages=["th", "en"],
+        settings={
+            "PREFER_DATES_FROM": "future"
+        }
     )
 
     if not parsed:
