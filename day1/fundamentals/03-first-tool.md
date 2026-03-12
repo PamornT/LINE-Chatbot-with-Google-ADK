@@ -102,7 +102,7 @@ from tools.vehicle import (
 # สร้าง sales agent สำหรับ dealership
 root_agent = Agent(
     model='gemini-2.5-flash',
-    name='AutomotiveSalesAgent',
+    name='SalesAgent',
     description='Sales assistant with vehicle lookup and financing tools',
     instruction="""You are an expert automotive sales consultant for a Thai dealership.
 
@@ -121,7 +121,7 @@ cd ..
 adk web
 ```
 
-![alt text](</assets/img/slide/Screenshot 2569-03-12 at 10.54.35.png>)
+![alt text](</assets/img/slide/SalesAgentTools_1.png>)
 
 ## ทดสอบเปลี่ยน Format การ Response
 ```python
@@ -169,7 +169,7 @@ from tools.vehicle import (
 # สร้าง sales agent สำหรับ dealership
 root_agent = Agent(
     model='gemini-2.5-flash',
-    name='AutomotiveSalesAgent',
+    name='SalesAgent',
     description='Sales assistant with vehicle lookup and financing tools',
     instruction="""You are an expert automotive sales consultant for a Thai dealership.
 
@@ -186,7 +186,7 @@ Format the result as a human-readable bullet list.""",
 )
 ```
 ## ทดสอบ Run Agent - Multi Tool
-![alt text](</assets/img/slide/Screenshot 2569-03-12 at 10.56.17.png>)
+![alt text](</assets/img/slide/SalesAgentTools_2.png>)
 
 ---
 ## 🔧 Create Tool - Calculate Monthly Payment and Search Inventory
@@ -278,7 +278,7 @@ from tools.vehicle import (
 # สร้าง sales agent สำหรับ dealership
 root_agent = Agent(
     model='gemini-2.5-flash',
-    name='AutomotiveSalesAgent',
+    name='SalesAgent',
     description='Sales assistant with vehicle lookup and financing tools',
     instruction="""You are an expert automotive sales consultant for a Thai dealership.
 
@@ -302,7 +302,7 @@ Help customers find the perfect vehicle based on their needs and budget.""",
     ]
 )
 ```
-![alt text](</assets/img/slide/Screenshot 2569-03-12 at 11.44.40.png>)
+![alt text](</assets/img/slide/SalesAgentTools_3.png>)
 ---
 
 
