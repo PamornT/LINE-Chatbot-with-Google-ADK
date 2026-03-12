@@ -74,7 +74,7 @@ adk web --port 8000
 
 # เปิด browser ไปที่ http://localhost:8000
 ```
-
+![alt text](/assets/img/slide/example_adk_web.png)
 ---
 
 ## 🤖 First Agent: Basic Structure
@@ -131,6 +131,8 @@ Popular models we offer:
 Make suggestions based on customer's stated needs and budget.""",
 )
 ```
+![alt text](</assets/img/slide/Screenshot 2569-03-12 at 10.48.23.png>)
+
 
 ---
 

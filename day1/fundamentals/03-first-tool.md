@@ -120,6 +120,9 @@ You have access to comprehensive tools to help customers:
 cd ..
 adk web
 ```
+
+![alt text](</assets/img/slide/Screenshot 2569-03-12 at 10.54.35.png>)
+
 ## ทดสอบเปลี่ยน Format การ Response
 ```python
 # เพิ่มเข้า Instructions ใน agent.py
@@ -182,6 +185,8 @@ Format the result as a human-readable bullet list.""",
     ]
 )
 ```
+## ทดสอบ Run Agent - Multi Tool
+![alt text](</assets/img/slide/Screenshot 2569-03-12 at 10.56.17.png>)
 
 ---
 ## 🔧 Create Tool - Calculate Monthly Payment and Search Inventory
@@ -297,49 +302,8 @@ Help customers find the perfect vehicle based on their needs and budget.""",
     ]
 )
 ```
+![alt text](</assets/img/slide/Screenshot 2569-03-12 at 11.44.40.png>)
 ---
----
----
----
-
-## 🤖 Agent with Multiple Tools
-
-### Creating Agent with Tools
-
-```python
-# agent.py
-from google.adk.agents.llm_agent import Agent
-from tools.vehicle import (
-    get_available_models,
-    get_vehicle_specs,
-    calculate_monthly_payment,
-    search_inventory
-)
-
-# สร้าง sales agent สำหรับ dealership
-root_agent = Agent(
-    model='gemini-2.5-flash',
-    name='AutomotiveSalesAgent',
-    description='Sales assistant with vehicle lookup and financing tools',
-    instruction="""You are an expert automotive sales consultant for a Thai dealership.
-
-You have access to comprehensive tools to help customers:
-- Look up vehicle specifications
-- Calculate financing options
-- Search our inventory
-- Search for available models
-
-Always use the tools to provide accurate information.
-Present information clearly in Thai currency (฿).
-Help customers find the perfect vehicle based on their needs and budget.""",
-    tools=[
-        get_available_models,
-        get_vehicle_specs,
-        calculate_monthly_payment,
-        search_inventory
-    ]
-)
-```
 
 
 ### How Agent Decides to Use Tools

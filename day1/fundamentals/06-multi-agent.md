@@ -59,3 +59,4 @@ Maintain the same language as the user (Thai or English).
     ]
 )
 ```
+![alt text](</assets/img/slide/Screenshot 2569-03-11 at 22.07.16.png>)
