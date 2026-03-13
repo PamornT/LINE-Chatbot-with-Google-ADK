@@ -9,13 +9,12 @@
 
 ก่อนเริ่ม ตรวจสอบว่า:
 - ✅ Codespace พร้อมใช้งาน
-- ✅ Gemini API key ตั้งค่าแล้ว (จาก Google AI Studio)
+- ✅ Gemini API key กรณีที่ยังไม่มีให้ไปสร้างที่ ([Google AI Studio](https://aistudio.google.com/))
 - ✅ Python 3.10+ ทำงานได้
 
 ```bash
 python3 --version
 pip --version
-echo $GOOGLE_API_KEY
 ```
 
 ---
