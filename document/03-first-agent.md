@@ -1,4 +1,4 @@
-# Building Your First Agent with Google ADK
+![alt text](/assets/img/slide/BuildFirstAgent.png)
 
 ## 🎯 Objective
 สร้าง AI agent แรกด้วย Google ADK (Python) - ใช้งาน framework สำหรับ agent development
