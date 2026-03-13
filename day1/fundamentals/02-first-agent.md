@@ -95,7 +95,9 @@ root_agent = Agent(
     instruction='You are a helpful sales assistant for cars. Be professional and assist customers with their inquiries.'
 )
 ```
+![alt text](/assets/img/slide/AnatomyAgent1.png)
 
+![alt text](/assets/img/slide/AnatomyAgent2.png)
 
 
 ## 🎯 Automotive Sales Agent Example
@@ -135,22 +137,4 @@ Make suggestions based on customer's stated needs and budget.""",
 ![alt text](</assets/img/slide/SalesAgentNoTools.png>)
 
 
----
-
-## 🎯 Best Practices
-
-1. **Clear Instructions**: ให้ instruction ชัดเจน directive ต่อ agent
-2. **Type Hints Required**: Tools ต้องมี type hints ทั้งหมด
-3. **Useful Docstrings**: Docstring บอกให้ agent รู้ว่า tool ทำอะไร
-4. **Realistic Tools**: Tool ต้องตอบสนอง real use cases
-5. **Error Handling**: Return meaningful messages เมื่อเกิด error
-
----
-
-## 🎯 Key Takeaways
-
-1. ✅ Google ADK เป็น framework สำหรับ agent development
-2. ✅ Use `adk create` สร้าง project structure
-3. ✅ Gemini model decide เมื่อไหร่ใช้ tool
-4. ✅ Test ด้วย CLI หรือ web interface
 
