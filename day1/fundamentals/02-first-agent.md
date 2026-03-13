@@ -100,7 +100,7 @@ root_agent = Agent(
 
 ## 🎯 Automotive Sales Agent Example
 
-ลองสร้าง agent เพื่อช่วย customers หา cars:
+ลองกำหนดหน้าที่ให้ Agent ตอบคำถามเกี่ยวกับเรื่อง Automotive:
 
 ```python
 # agent.py
