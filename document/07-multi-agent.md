@@ -19,7 +19,7 @@ sales_agent = Agent(
 
 ### Change Operation Agent to Sub Agent
 
-เปิดไฟล์ sales_agent/agent.py แล้วเปลี่ยน root_agent เป็น operations_agent
+เปิดไฟล์ operations_agent/agent.py แล้วเปลี่ยน root_agent เป็น operations_agent
 
 ```python
 operations_agent = Agent(
