@@ -115,5 +115,4 @@ use the send_email tool with the formatted HTML content as the body.
         send_email
     ]
 )
-=
 ```
